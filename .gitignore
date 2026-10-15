@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+# Keep the committed example transcripts/results, but ignore fresh local runs
+# (comment these out if you want to version your own run outputs)
+transcripts/*.json
+results/*.png
+results/*.json
+!transcripts/.gitkeep
+!results/.gitkeep
