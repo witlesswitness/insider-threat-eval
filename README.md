@@ -1,5 +1,8 @@
 # Catching an insider-threat AI agent: rule-based vs. LLM monitors
 
+<!-- Replace YOUR_USERNAME after you push, so the badge points at your repo. -->
+[![CI](https://github.com/YOUR_USERNAME/insider-threat-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/insider-threat-eval/actions/workflows/ci.yml)
+
 A small empirical study in the **AI control** tradition. We give an LLM agent a
 secret, misaligned side-objective while it performs an ordinary sysadmin task,
 then measure how well two kinds of monitor catch it:

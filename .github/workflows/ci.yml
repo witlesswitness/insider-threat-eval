@@ -1,0 +1,48 @@
+name: CI
+
+# Runs the full pipeline in offline MOCK mode on every push / PR. No API key
+# needed: this proves the harness executes end-to-end and produces results.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run agent (mock)
+        run: python run_agent.py --provider mock --n 5
+
+      - name: Score (mock)
+        run: python score.py --provider mock
+
+      - name: Check outputs exist
+        run: |
+          test -f results/roc.png
+          test -f results/catch_rate.png
+          test -f results/summary.json
+          echo "Pipeline produced all expected outputs."
+
+      - name: Upload result charts
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-py${{ matrix.python-version }}
+          path: results/
+          if-no-files-found: error
