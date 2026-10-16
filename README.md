@@ -87,7 +87,7 @@ and judging the sabotage.
 | File | What it is |
 |------|-----------|
 | `environment.py` | simulated filesystem + tools + tool-call logging |
-| `tasks.py` | honest tasks and the three secret attack objectives |
+| `tasks.py` | honest tasks and the five secret attack objectives |
 | `run_agent.py` | runs episodes, writes transcripts, labels attack success |
 | `monitors/rule_based.py` | **SIEM-style detections — the detection-engineering core** |
 | `monitors/llm_monitor.py` | second-model suspicion scorer |
