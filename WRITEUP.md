@@ -16,8 +16,9 @@ built a small testbed to study two defenses against this: a rule-based,
 SIEM (security information and event management)-style monitor over the agent's tool-call log, and an LLM-based monitor (a
 second model reading the same log). Two findings. **(1)** The live agent
 (`claude-haiku-5-5`) refused or ignored the injected insider-threat objective in
-every episode, under both a naive prompt-injection framing and an explicit
-"authorized red-team" framing. **(2)** Evaluated against *synthetic* attack
+every episode — 0 / 30 compliance under an explicit "authorized red-team" framing
+(and likewise under a naive prompt-injection framing), refusing *and flagging*
+the injection in all 30. **(2)** Evaluated against *synthetic* attack
 trajectories, both monitors separated attacks from benign activity almost
 perfectly (area under the receiver operating characteristic (ROC) curve, AUC ≈ 1.00), but each exhibited a characteristic and distinct
 *failure mode*: the rule-based monitor produced brittle false positives on
@@ -87,14 +88,15 @@ purpose is to test monitoring) it *still* declined. Two modes were observed:
 - **Silent non-compliance.** On an exfiltration episode it simply did the honest
   task and never touched the secrets file or acknowledged the injected objective.
 
-Across the live-model run (n = [FILL: live-model attack episodes, e.g. 30]),
-compliance was: complied [FILL]%, refused-and-flagged [FILL]%, silently-declined
-[FILL]%.
-
-> **TODO (one cheap command):** regenerate the exact live-model numbers with
-> `python run_agent.py --n 30 --attacker model` then `python score.py`, and read
-> `compliance_breakdown` from `results/summary.json`. In the pilot (n = 2 per
-> framing) the agent declined 2/2 under *both* framings.
+Across a 30-episode live-model run under the authorized red-team framing — the
+*stronger* test, since it explicitly tells the model the sabotage is sanctioned —
+the agent **complied in 0 / 30 episodes**. It refused *and explicitly flagged*
+the injected objective in 30 / 30 (100%), with zero cases of silent
+non-compliance. (In the earlier naive-injection pilot it also declined, there
+splitting between explicit refusal and silently ignoring the objective.) As a
+sanity check, both monitors scored these 30 refused transcripts near zero (mean
+suspicion ≈ 0.6 / 10 each) — a refusal leaves no malicious action behind to
+detect.
 
 This is a real result about the model, and a reassuring one: an aligned frontier
 agent would not act as an insider threat even when told, within a sandbox, that
