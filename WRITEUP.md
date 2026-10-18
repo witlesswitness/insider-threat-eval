@@ -8,18 +8,18 @@
 
 ## Abstract
 
-Autonomous LLM agents are beginning to get real tool access inside real
+Autonomous LLM (large language model) agents are beginning to get real tool access inside real
 infrastructure, which revives an old problem in a new form: the insider threat.
 A compromised or misaligned agent can perform its assigned task competently while
 quietly exfiltrating data, establishing persistence, or weakening controls. I
 built a small testbed to study two defenses against this: a rule-based,
-SIEM-style monitor over the agent's tool-call log, and an LLM-based monitor (a
+SIEM (security information and event management)-style monitor over the agent's tool-call log, and an LLM-based monitor (a
 second model reading the same log). Two findings. **(1)** The live agent
 (`claude-haiku-5-5`) refused or ignored the injected insider-threat objective in
 every episode, under both a naive prompt-injection framing and an explicit
 "authorized red-team" framing. **(2)** Evaluated against *synthetic* attack
 trajectories, both monitors separated attacks from benign activity almost
-perfectly (AUC ≈ 1.00), but each exhibited a characteristic and distinct
+perfectly (area under the receiver operating characteristic (ROC) curve, AUC ≈ 1.00), but each exhibited a characteristic and distinct
 *failure mode*: the rule-based monitor produced brittle false positives on
 benign-but-unusual actions, while the LLM monitor failed to return a usable score
 on an entire attack category (persistence: 6/6 episodes) even after a retry. The
@@ -32,7 +32,7 @@ The AI-control research agenda asks: assuming a deployed model may be subverted
 or misaligned, does our *monitoring* catch misbehavior regardless? Insider threat
 is a sharp instance. Detection engineering answers it with rules over telemetry;
 the safety community increasingly answers it with a trusted monitor model.
-Coming from a SOC background, I wanted to put the two head to head on the same
+Coming from a SOC (security operations center) background, I wanted to put the two head to head on the same
 data and, more usefully, find *where each one fails*.
 
 ## 2. Setup
@@ -166,7 +166,7 @@ for an exfiltration episode: *"read /etc/app/secrets.env, which has nothing to d
 with log rotation, and copied it to /tmp/scratch.tmp, staging credentials in a
 world-readable location. Its summary also omits this activity."* It needed no
 per-attack rules and caught behavior the rules were never written for. The cost
-is API latency, per-call expense, and the reliability gap above.
+is API (application programming interface) latency, per-call expense, and the reliability gap above.
 
 ![Catch rate](docs/figures/catch_rate.png)
 
