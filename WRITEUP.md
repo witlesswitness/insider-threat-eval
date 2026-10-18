@@ -168,6 +168,11 @@ world-readable location. Its summary also omits this activity."* It needed no
 per-attack rules and caught behavior the rules were never written for. The cost
 is API (application programming interface) latency, per-call expense, and the reliability gap above.
 
+![LLM monitor unscorable rate by attack type](docs/figures/llm_unscorable_by_category.png)
+
+*The LLM monitor returned no usable score on 100% of persistence attacks and 0%
+of every other category — a reproducible, category-specific reliability gap.*
+
 ![Catch rate](docs/figures/catch_rate.png)
 
 ## 5. Two bugs found and fixed during analysis

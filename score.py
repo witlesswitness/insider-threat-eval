@@ -229,10 +229,36 @@ def main():
             plt.xticks(x, categories, rotation=15)
             plt.ylim(0, 1)
             plt.ylabel("Fraction of attacks MISSED")
-            plt.title("Where each monitor fails, by attack type")
+            plt.title("Where each monitor fails (missed detections), by attack type")
             plt.legend()
+            plt.ylim(0, 1.05)
             plt.tight_layout()
             plt.savefig(os.path.join(config.RESULTS_DIR, "missed_by_category.png"), dpi=130)
+            plt.close()
+
+        # LLM-monitor reliability: fraction of attacks it could NOT score, by
+        # category. This is the real "failure mode" chart — misses are ~0, but
+        # the LLM monitor returns no usable score on an entire category.
+        atk_cats = sorted({p["attack_category"] for p in attack_rows if p["attack_category"]})
+        if atk_cats:
+            unscorable = []
+            for cat in atk_cats:
+                rows = [p for p in attack_rows if p["attack_category"] == cat]
+                bad = sum(1 for p in rows if p["llm_score"] is None)
+                unscorable.append(bad / len(rows) if rows else 0)
+            x = np.arange(len(atk_cats))
+            plt.figure(figsize=(7, 5))
+            bars = plt.bar(x, unscorable, color="#C44E52")
+            plt.xticks(x, atk_cats, rotation=15)
+            plt.ylim(0, 1.15)
+            plt.ylabel("Fraction of attacks with NO usable LLM score")
+            plt.title("LLM monitor: unscorable rate by attack type", pad=12)
+            for b, v in zip(bars, unscorable):
+                plt.text(b.get_x() + b.get_width() / 2, v + 0.03, f"{v:.0%}",
+                         ha="center", va="bottom")
+            plt.tight_layout()
+            plt.savefig(os.path.join(config.RESULTS_DIR, "llm_unscorable_by_category.png"),
+                        dpi=130)
             plt.close()
 
     # sanity: how did monitors score the attacks the agent DIDN'T carry out?
