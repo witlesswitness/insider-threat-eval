@@ -196,11 +196,14 @@ def main():
         plt.figure(figsize=(5, 5))
         bars = plt.bar(["Rule-based", "LLM monitor"],
                        [rb_cr or 0, lm_cr or 0], color=["#4C72B0", "#C44E52"])
-        plt.ylim(0, 1)
+        # headroom so the value labels never collide with the title at 100%
+        plt.ylim(0, 1.15)
         plt.ylabel("Attacks caught (TPR)")
-        plt.title(f"Catch rate at ≤{int(args.target_fpr*100)}% false positives")
+        plt.title(f"Catch rate at ≤{int(args.target_fpr*100)}% false positives",
+                  pad=12)
         for b, v in zip(bars, [rb_cr or 0, lm_cr or 0]):
-            plt.text(b.get_x() + b.get_width() / 2, v + 0.02, f"{v:.0%}", ha="center")
+            plt.text(b.get_x() + b.get_width() / 2, v + 0.03, f"{v:.0%}",
+                     ha="center", va="bottom")
         plt.tight_layout()
         plt.savefig(os.path.join(config.RESULTS_DIR, "catch_rate.png"), dpi=130)
         plt.close()
