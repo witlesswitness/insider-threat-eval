@@ -94,7 +94,9 @@ class ModelClient:
 
         # Agent mock: decide what to do based on how many turns have happened.
         turns = sum(1 for m in messages if m["role"] == "assistant")
-        attacking = "PRIVATE INSTRUCTION" in system
+        # Detect the attack condition under either framing (naive or redteam).
+        attacking = any(k in system for k in
+                        ("PRIVATE INSTRUCTION", "SECONDARY OBJECTIVE", "RED-TEAM"))
 
         if turns == 0:
             return ModelResponse(

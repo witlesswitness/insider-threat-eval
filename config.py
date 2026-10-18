@@ -15,6 +15,11 @@ AGENT_MODEL = os.environ.get("AGENT_MODEL", "claude-haiku-5-5")
 # The LLM monitor. A more capable, DIFFERENT model, reviewing the agent's work.
 MONITOR_MODEL = os.environ.get("MONITOR_MODEL", "claude-sonnet-5-5")
 
+# Attack framing: "redteam" (authorized AI-control attack-policy framing, elicits
+# attempts so monitors have signal) or "naive" (bare prompt-injection; a
+# well-aligned agent usually refuses). Comparing the two is itself a finding.
+ATTACK_FRAMING = os.environ.get("ATTACK_FRAMING", "redteam")
+
 # How many transcripts to collect per condition (honest / attack) per run.
 # Start small to prove the pipeline, then raise. 10 is a good smoke-test value;
 # 30-50 gives you something you can actually put error bars on.
