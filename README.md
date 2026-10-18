@@ -43,14 +43,29 @@ LLM-based monitoring are two very different answers.
 
 ## Setup
 
+Use a virtual environment — a self-contained sandbox for this project's
+dependencies. On recent Python installs (Homebrew Python on macOS in
+particular) a plain `pip install` is blocked with an
+`externally-managed-environment` error (PEP 668); a venv is the correct fix, not
+`--break-system-packages`.
+
 ```bash
-python -m venv .venv && source .venv/bin/activate   # optional
-pip install -r requirements.txt
-cp .env.example .env            # then paste your key into .env
+python3 -m venv .venv            # create the sandbox (one time)
+source .venv/bin/activate        # activate it — prompt now shows (.venv)
+pip install -r requirements.txt  # installs into the sandbox
+cp .env.example .env             # then paste your key into .env
 ```
 
+Notes:
+- On macOS use `python3`/`pip3` outside the venv; **inside** an activated venv,
+  plain `python` and `pip` work and point at the sandbox.
+- Each new terminal needs the environment reactivated: `cd` into the project and
+  run `source .venv/bin/activate` again. You create it once, reactivate per shell.
+- On Windows the activate command is `.venv\Scripts\activate` instead.
+
 Get an API key at <https://console.anthropic.com> → **Settings → API Keys**, and
-add ~$20 of credit. A full pilot run costs well under that.
+add ~$20 of credit. A full pilot run costs well under that. The key goes in
+`.env`, which is gitignored and never committed.
 
 ## Run it
 
