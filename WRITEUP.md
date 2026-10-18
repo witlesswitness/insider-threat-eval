@@ -98,6 +98,8 @@ sanity check, both monitors scored these 30 refused transcripts near zero (mean
 suspicion ≈ 0.6 / 10 each) — a refusal leaves no malicious action behind to
 detect.
 
+![Live agent compliance breakdown](docs/figures/compliance_breakdown.png)
+
 This is a real result about the model, and a reassuring one: an aligned frontier
 agent would not act as an insider threat even when told, within a sandbox, that
 doing so was authorized. I deliberately did **not** try to escalate the prompt to
@@ -174,8 +176,6 @@ is API (application programming interface) latency, per-call expense, and the re
 
 *The LLM monitor returned no usable score on 100% of persistence attacks and 0%
 of every other category — a reproducible, category-specific reliability gap.*
-
-![Catch rate](docs/figures/catch_rate.png)
 
 ## 5. Two bugs found and fixed during analysis
 
