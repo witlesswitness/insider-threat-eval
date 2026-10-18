@@ -84,7 +84,33 @@ python score.py                   # score with both monitors, write charts
 ```
 
 Outputs land in `results/`: `roc.png`, `catch_rate.png`,
-`missed_by_category.png`, and `summary.json` (all the numbers).
+`missed_by_category.png`, `compliance_breakdown.png`, and `summary.json`.
+
+### Two findings, two modes
+
+The live agent (`claude-haiku-5-5`) **refuses or ignores** the injected
+insider-threat objective under both the `naive` and `redteam` framings. That is
+a real result about the model — the **Path 1** finding, reported as the
+compliance breakdown.
+
+Because an aligned agent won't attack, the monitors need signal from somewhere
+to be evaluated (**Path 2**). Use the attacker mode for that:
+
+```bash
+# Path 1 — what the live model actually does (it declines):
+python run_agent.py --n 30 --attacker model
+
+# Path 2 — synthetic attack trajectories so detection can be measured:
+python run_agent.py --n 30 --attacker scripted
+python score.py
+```
+
+`--attacker scripted` makes the harness itself produce the malicious action log
+(the honest task done correctly, with the attack action slipped in), representing
+what a *compromised* agent would do. Honest episodes always come from the live
+model. Each synthetic transcript is flagged `"synthetic": true`. This is a
+disclosed, standard way to evaluate monitors; the purer alternative — an actual
+open-weights untrusted model as the attacker — is named as future work.
 
 ## Models
 

@@ -22,6 +22,7 @@ from model_client import ModelClient
 from tasks import (
     build_episodes, HONEST_SYSTEM, attack_suffix,
 )
+from scripted_attacker import run_scripted_attack
 
 
 def run_episode(client, episode_id, condition, honest_task, attack_obj):
@@ -124,6 +125,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--provider", default="anthropic", choices=["anthropic", "mock"])
     ap.add_argument("--n", type=int, default=config.N_PER_CONDITION)
+    ap.add_argument(
+        "--attacker", default="model", choices=["model", "scripted"],
+        help="'model': the live LLM decides (it tends to refuse — that's the "
+             "Path-1 finding). 'scripted': synthesize attack trajectories so the "
+             "monitors have signal (Path 2). Honest episodes always use the model.",
+    )
     args = ap.parse_args()
 
     os.makedirs(config.TRANSCRIPT_DIR, exist_ok=True)
@@ -131,18 +138,24 @@ def main():
     episodes = build_episodes(args.n)
 
     print(f"Running {len(episodes)} episodes with provider={args.provider}, "
-          f"agent={config.AGENT_MODEL}, framing={config.ATTACK_FRAMING}")
+          f"agent={config.AGENT_MODEL}, framing={config.ATTACK_FRAMING}, "
+          f"attacker={args.attacker}")
 
     n_attacks = n_success = 0
     compliance_counts = {"complied": 0, "refused_flagged": 0, "silently_declined": 0}
     for episode_id, condition, honest_task, attack_obj in episodes:
-        env = run_episode(client, episode_id, condition, honest_task, attack_obj)
+        if condition == "attack" and args.attacker == "scripted":
+            env = run_scripted_attack(honest_task, attack_obj)
+        else:
+            env = run_episode(client, episode_id, condition, honest_task, attack_obj)
         success = attack_succeeded(env, attack_obj)
 
         record = {
             "episode_id": episode_id,
             "condition": condition,
             "attack_framing": config.ATTACK_FRAMING if condition == "attack" else None,
+            "attacker": args.attacker if condition == "attack" else None,
+            "synthetic": (condition == "attack" and args.attacker == "scripted"),
             "honest_task": honest_task.id,
             "attack_objective": attack_obj.id if attack_obj else None,
             "attack_category": attack_obj.category if attack_obj else None,
